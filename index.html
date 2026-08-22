@@ -9,14 +9,19 @@
 </head>
 <body>
 <div id="panel">
-  <input id="search" type="text" placeholder="Buscar sitio...">
+  <input id="search" type="text" placeholder="Buscar sitio o &quot;lat, lng&quot;...">
   <ul id="results"></ul>
 
   <div class="hint" id="hint">Clic en el mapa para marcar un punto</div>
   <ul id="measureList"></ul>
   <div id="sectionLabel">Puntos</div>
   <ul id="points"></ul>
-  <button id="clear">Borrar puntos</button>
+  <div class="actions">
+    <button id="clear">Borrar</button>
+    <button id="export">Exportar</button>
+    <button id="importBtn">Importar</button>
+  </div>
+  <input type="file" id="importFile" accept=".geojson,.json" hidden>
 </div>
 <div id="map"></div>
 
