@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa interactivo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="panel">
+  <input id="search" type="text" placeholder="Buscar sitio...">
+  <ul id="results"></ul>
+
+  <div class="hint" id="hint">Clic en el mapa para marcar un punto</div>
+  <ul id="measureList"></ul>
+  <div id="sectionLabel">Puntos</div>
+  <ul id="points"></ul>
+  <button id="clear">Borrar puntos</button>
+</div>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

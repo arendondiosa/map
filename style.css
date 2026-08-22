@@ -1,0 +1,80 @@
+:root {
+  --ink: #18181b;
+  --muted: #71717a;
+  --line: #e4e4e7;
+  --bg: #ffffff;
+  --accent: #2563eb;
+  --measure: #f43f5e;
+}
+html, body { margin: 0; height: 100%; font-family: -apple-system, system-ui, sans-serif; color: var(--ink); }
+#map { position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: #f4f4f5; }
+.leaflet-control-attribution { font-size: 10px; }
+
+#panel {
+  position: absolute; top: 16px; left: 16px; z-index: 1000;
+  background: var(--bg); padding: 16px; border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
+  width: 300px; font-size: 13px;
+}
+#search {
+  width: 100%; box-sizing: border-box; padding: 8px 2px; margin-bottom: 4px;
+  border: none; border-bottom: 1px solid var(--line); outline: none;
+  font-size: 13px; background: transparent;
+}
+#search:focus { border-bottom-color: var(--ink); }
+#results { list-style: none; margin: 0; padding: 0; max-height: 140px; overflow-y: auto; }
+#results li { padding: 6px 4px; cursor: pointer; color: var(--muted); border-radius: 6px; }
+#results li:hover { background: #f4f4f5; color: var(--ink); }
+
+.hint { color: var(--muted); font-size: 12px; margin: 10px 0 6px; }
+
+#measureList { list-style: none; margin: 0 0 8px; padding: 0; }
+#measureList li {
+  display: flex; align-items: center; gap: 6px; padding: 5px 4px;
+  border-radius: 6px; font-size: 12px; font-weight: 600;
+}
+#measureList li:hover { background: #f4f4f5; }
+#measureList .swatch { width: 16px; height: 2px; flex: none; border-radius: 2px; }
+#measureList .m-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+#measureList button {
+  border: none; background: none; cursor: pointer; color: var(--muted); font-size: 13px;
+  line-height: 1; padding: 2px 4px; border-radius: 4px;
+}
+#measureList button:hover { background: #e4e4e7; color: var(--ink); }
+#sectionLabel { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; margin: 10px 0 4px; }
+
+#points { list-style: none; margin: 0; padding: 0; }
+#points li {
+  display: flex; align-items: center; gap: 8px; padding: 5px 4px;
+  border-radius: 6px; cursor: pointer;
+}
+#points li:hover { background: #f4f4f5; }
+#points li.selected { background: #fff1f2; }
+#points .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+#points li.selected .dot { background: var(--measure); }
+#points .label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#points button {
+  border: none; background: none; cursor: pointer; color: var(--muted); font-size: 13px;
+  line-height: 1; padding: 2px 4px; border-radius: 4px;
+}
+#points button:hover { background: #e4e4e7; color: var(--ink); }
+
+#clear {
+  margin-top: 10px; width: 100%; padding: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: none; border-radius: 8px;
+  color: var(--muted); font-size: 12px;
+}
+#clear:hover { background: #f4f4f5; color: var(--ink); }
+
+.pt-icon {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.35);
+}
+.pt-icon.pending { background: var(--measure); }
+
+.measure-label {
+  background: var(--ink); color: #fff; padding: 3px 8px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
