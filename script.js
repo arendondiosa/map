@@ -1,10 +1,5 @@
 const COLOMBIA_CENTER = [4.5709, -74.2973];
 const map = L.map('map', { zoomControl: false }).setView(COLOMBIA_CENTER, 7);
-navigator.geolocation?.getCurrentPosition(
-  pos => map.flyTo([pos.coords.latitude, pos.coords.longitude], 12),
-  () => {},
-  { timeout: 5000 }
-);
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO',
@@ -37,15 +32,24 @@ function handlePointClick(id) {
   refresh();
 }
 
-// Creates a point without opening the rename field — used for GeoJSON import.
-function createPoint(lat, lng, label, id) {
+// Creates a point without opening the rename field — used on load and GeoJSON import.
+function createPoint(lat, lng, label, id, visible = true) {
   const pointId = id ?? nextId++;
   nextId = Math.max(nextId, pointId + 1);
-  const marker = L.marker([lat, lng], { icon: pointIcon(false) }).addTo(map);
+  const marker = L.marker([lat, lng], { icon: pointIcon(false) });
   marker.bindTooltip(label, { permanent: true, direction: 'top', offset: [0, -8], className: 'point-label' });
   marker.on('click', () => handlePointClick(pointId));
-  points.push({ id: pointId, marker, label });
+  if (visible) marker.addTo(map);
+  points.push({ id: pointId, marker, label, visible });
   return pointId;
+}
+
+function toggleVisibility(id) {
+  const p = points.find(p => p.id === id);
+  if (!p) return;
+  p.visible = !p.visible;
+  if (p.visible) p.marker.addTo(map); else map.removeLayer(p.marker);
+  refresh();
 }
 
 // Creates a point and immediately opens its label for inline editing.
@@ -93,6 +97,7 @@ function refresh() {
   points.forEach(p => {
     const li = document.createElement('li');
     if (p.id === pending) li.classList.add('selected');
+    if (!p.visible) li.classList.add('hidden-point');
 
     const dot = document.createElement('span');
     dot.className = 'dot';
@@ -119,6 +124,12 @@ function refresh() {
     labelSpan.ondblclick = (e) => { e.stopPropagation(); editing = p.id; refresh(); };
     li.appendChild(labelSpan);
 
+    const eyeBtn = document.createElement('button');
+    eyeBtn.textContent = '👁';
+    eyeBtn.title = p.visible ? 'Ocultar del mapa' : 'Mostrar en el mapa';
+    eyeBtn.onclick = (e) => { e.stopPropagation(); toggleVisibility(p.id); };
+    li.appendChild(eyeBtn);
+
     const btn = document.createElement('button');
     btn.textContent = '✕';
     btn.onclick = (e) => { e.stopPropagation(); removePoint(p.id); };
@@ -136,7 +147,7 @@ function refresh() {
   measurements.forEach((m, i) => {
     const pa = points.find(p => p.id === m.aId);
     const pb = points.find(p => p.id === m.bId);
-    if (!pa || !pb) return;
+    if (!pa || !pb || !pa.visible || !pb.visible) return;
     const a = pa.marker.getLatLng(), b = pb.marker.getLatLng();
     const dist = a.distanceTo(b);
     const color = PALETTE[i % PALETTE.length];
@@ -164,9 +175,63 @@ function refresh() {
     li.append(swatch, mLabel, btn);
     mList.appendChild(li);
   });
+
+  saveState();
+}
+
+// --- Persistencia en localStorage ---
+const STORAGE_KEY = 'mapa-interactivo-data';
+
+function saveState() {
+  const data = {
+    nextId, nextMeasureId,
+    points: points.map(p => {
+      const ll = p.marker.getLatLng();
+      return { id: p.id, lat: ll.lat, lng: ll.lng, label: p.label, visible: p.visible };
+    }),
+    measurements
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadState() {
+  let data;
+  try {
+    data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return;
+  }
+  if (!data) return;
+  (data.points || []).forEach(p => createPoint(p.lat, p.lng, p.label, p.id, p.visible !== false));
+  measurements = (data.measurements || []).map(m => ({ id: m.id, aId: m.aId, bId: m.bId }));
+  nextId = data.nextId ?? nextId;
+  nextMeasureId = data.nextMeasureId ?? nextMeasureId;
 }
 
 map.on('click', e => addPoint(e.latlng.lat, e.latlng.lng, `Punto (${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)})`));
+
+function fitToPoints() {
+  // The map container can still measure 0x0 right after load (e.g. a
+  // backgrounded tab hasn't laid out yet) — retry until it has real size.
+  const size = map.getSize();
+  if (size.x === 0 || size.y === 0) {
+    requestAnimationFrame(fitToPoints);
+    return;
+  }
+  map.fitBounds(L.latLngBounds(points.map(p => p.marker.getLatLng())), { padding: [40, 40] });
+}
+
+loadState();
+refresh();
+if (points.length) {
+  fitToPoints();
+} else {
+  navigator.geolocation?.getCurrentPosition(
+    pos => map.flyTo([pos.coords.latitude, pos.coords.longitude], 12),
+    () => {},
+    { timeout: 5000 }
+  );
+}
 
 document.getElementById('clear').onclick = () => {
   points.forEach(p => map.removeLayer(p.marker));
@@ -276,6 +341,7 @@ function importGeoJSON(file) {
 
     refresh();
     if (points.length) {
+      map.invalidateSize();
       map.fitBounds(L.latLngBounds(points.map(p => p.marker.getLatLng())), { padding: [40, 40] });
     }
   };

@@ -85,6 +85,8 @@ html, body { margin: 0; height: 100%; font-family: -apple-system, system-ui, san
   line-height: 1; padding: 2px 4px; border-radius: 4px;
 }
 #points button:hover { background: #e4e4e7; color: var(--ink); }
+#points li.hidden-point { opacity: .45; }
+#points li.hidden-point .label { text-decoration: line-through; }
 
 .actions { display: flex; gap: 6px; margin-top: 10px; }
 .actions button {
