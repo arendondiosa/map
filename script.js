@@ -13,6 +13,8 @@ let editing = null;      // id of the point currently being renamed inline
 let measurements = [];   // {id, aId, bId}
 let nextMeasureId = 1;
 let measureLayers = [];  // leaflet layers currently drawn for measurements
+let distMin = null;      // km, filters which measurements are shown
+let distMax = null;
 const PALETTE = ['#f43f5e', '#f97316', '#0ea5e9', '#8b5cf6', '#22c55e', '#eab308'];
 const COORD_RE = /^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/;
 
@@ -152,6 +154,10 @@ function refresh() {
     const dist = a.distanceTo(b);
     const color = PALETTE[i % PALETTE.length];
 
+    const km = dist / 1000;
+    if (distMin !== null && km < distMin) return;
+    if (distMax !== null && km > distMax) return;
+
     const line = L.polyline([a, b], { color, weight: 2, dashArray: '6 6' }).addTo(map);
     const mid = L.latLng((a.lat + b.lat) / 2, (a.lng + b.lng) / 2);
     const label = L.marker(mid, {
@@ -232,6 +238,15 @@ if (points.length) {
     { timeout: 5000 }
   );
 }
+
+document.getElementById('distMin').addEventListener('input', (e) => {
+  distMin = e.target.value === '' ? null : parseFloat(e.target.value);
+  refresh();
+});
+document.getElementById('distMax').addEventListener('input', (e) => {
+  distMax = e.target.value === '' ? null : parseFloat(e.target.value);
+  refresh();
+});
 
 document.getElementById('clear').onclick = () => {
   points.forEach(p => map.removeLayer(p.marker));

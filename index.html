@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mapa interactivo</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="style.css?v=4" />
+<link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
 <div id="panel">
@@ -16,6 +16,11 @@
   <ul id="results"></ul>
 
   <div class="hint" id="hint">Clic en el mapa para marcar un punto</div>
+  <div class="filter-row">
+    <input id="distMin" type="number" min="0" placeholder="Mín km">
+    <span>–</span>
+    <input id="distMax" type="number" min="0" placeholder="Máx km">
+  </div>
   <ul id="measureList"></ul>
   <div id="sectionLabel">Puntos</div>
   <ul id="points"></ul>
@@ -41,6 +46,6 @@
 </dialog>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js?v=4"></script>
+<script src="script.js?v=5"></script>
 </body>
 </html>
