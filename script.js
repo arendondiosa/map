@@ -288,3 +288,12 @@ document.getElementById('importFile').onchange = (e) => {
   if (e.target.files[0]) importGeoJSON(e.target.files[0]);
   e.target.value = '';
 };
+
+// --- Modal de ayuda: se muestra solo la primera vez, o al pulsar "?" ---
+const helpModal = document.getElementById('helpModal');
+document.getElementById('helpBtn').onclick = () => helpModal.showModal();
+document.getElementById('helpClose').onclick = () => helpModal.close();
+if (!localStorage.getItem('mapHelpSeen')) {
+  helpModal.showModal();
+  localStorage.setItem('mapHelpSeen', '1');
+}

@@ -5,11 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mapa interactivo</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="style.css?v=2" />
+<link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
 <div id="panel">
-  <input id="search" type="text" placeholder="Buscar sitio o &quot;lat, lng&quot;...">
+  <div class="panel-top">
+    <input id="search" type="text" placeholder="Buscar sitio o &quot;lat, lng&quot;...">
+    <button id="helpBtn" title="Qué es esto">?</button>
+  </div>
   <ul id="results"></ul>
 
   <div class="hint" id="hint">Clic en el mapa para marcar un punto</div>
@@ -25,7 +28,19 @@
 </div>
 <div id="map"></div>
 
+<dialog id="helpModal">
+  <h2>¿Qué es esto?</h2>
+  <p>Un mapa para marcar sitios y medir distancias entre ellos.</p>
+  <ul>
+    <li><strong>Marca puntos:</strong> clic en el mapa, o busca un lugar o coordenadas "lat, lng" arriba.</li>
+    <li><strong>Ponle nombre:</strong> se abre solo al crear el punto; doble clic en la lista para renombrarlo luego.</li>
+    <li><strong>Mide distancias:</strong> clic en dos puntos cualquiera (en el mapa o en la lista) para trazar una línea con la distancia. Repite desde el mismo punto para medir hacia varios más.</li>
+    <li><strong>Guarda tu trabajo:</strong> exporta a GeoJSON y vuelve a importarlo cuando quieras.</li>
+  </ul>
+  <button id="helpClose">Entendido</button>
+</dialog>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>
